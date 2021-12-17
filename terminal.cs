@@ -1,15 +1,16 @@
-﻿using System;
+using System;
 using System.Threading;
 
 namespace myProject {
 	class Program {
 		static void Main(string[] args) {
 			bool creating = true;
-			bool running = false;
+			//bool running = false;
 
+			Console.Clear();
 			Console.Write("Enter a username: ");
 			string? usrname = Console.ReadLine();
-			int usrlength = usrname.Length;
+			int? usrlength = usrname.Length;
 
 			if (usrlength >= 6) {
 				Console.WriteLine("Username creation succeeded");
@@ -42,7 +43,6 @@ namespace myProject {
 						Console.Clear();
 					}
 				}
-				commandLine();
 			}
 			else {
 				Console.WriteLine("Username must have a length of min 6 chars");
@@ -51,20 +51,36 @@ namespace myProject {
 		}
 
 		//* Hide input
-		static string getPass() {
-			string? password = "";
-			while (true) {
-				var key = Console.ReadKey(true);
-				if (key.Key == ConsoleKey.Enter)
-					break;
-				password += key.KeyChar;
-			}
-
-			return password;
-		}
-
-		static void commandLine() {
+		public static string getPass() {
+			string password = "";
 			
+			ConsoleKeyInfo info = Console.ReadKey(true);
+			while (info.Key != ConsoleKey.Enter) {
+				if (info.Key != ConsoleKey.Backspace) {
+					Console.Write("*"); /* Enter the character you want the
+					password to be masked with
+					*/
+					password += info.KeyChar;
+				}
+				else if (info.Key == ConsoleKey.Backspace) {
+					if (!string.IsNullOrEmpty(password)) {
+						//* remove one character from the list of password characters
+						password = password.Substring(0, password.Length - 1);
+						//* get the location of the cursor
+						int pos = Console.CursorLeft;
+						//* move the cursor to the left by one character
+						Console.SetCursorPosition(pos - 1, Console.CursorTop);
+						//* replace it with space
+						Console.Write(" ");
+						//* move the cursor to the left by one character again
+						Console.SetCursorPosition(pos - 1, Console.CursorTop);
+					}
+				}
+				info = Console.ReadKey(true);
+			}
+			//* add a new line because user pressed enter at the end of their password
+			Console.WriteLine();
+			return password;
 		}
 	}
 }
